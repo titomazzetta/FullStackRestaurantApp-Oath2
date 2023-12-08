@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  backend:
+    image: romafan89/restaurantv9-backend:latest
+    ports:
+      - "1337:1337"
+    env_file:
+      - ./backend/.env
+    environment:
+      - NODE_ENV=production
+  frontend:
+    image: romafan89/restaurantv9-frontend:latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=production

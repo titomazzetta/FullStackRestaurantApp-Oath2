@@ -40,7 +40,9 @@ function Home() {
                         <Input
                             onChange={(e) => setQuery(e.target.value.toLocaleLowerCase())}
                             value={query}
-                        />
+                            placeholder="Search for restaurants or dishes"
+                            />
+
                     </InputGroup>
                     <br></br>
                 </div>

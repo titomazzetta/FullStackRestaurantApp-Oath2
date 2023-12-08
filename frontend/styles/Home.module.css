@@ -551,7 +551,7 @@
 }
 
 .totalPriceBox {
-  background-color: white; /* White background */
+  background-color: rgb(0, 0, 0); /* White background */
   padding: 10px; /* Some padding */
   border-radius: 5px; /* Rounded corners */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow */
@@ -562,7 +562,7 @@
 }
 
 .totalPriceText {
-  color: black; /* Text color */
+  color: rgb(255, 255, 255); /* Text color */
   margin: 0; /* Remove default margins */
   font-size: 1em; /* Adjust font size as needed */
 }

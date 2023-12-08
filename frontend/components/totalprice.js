@@ -14,8 +14,8 @@ function TotalPrice() {
         <div className={styles.totalPriceBox}>
           <h5 className={styles.totalPriceText}>Cart Total: </h5>
           <h3 className={styles.totalPriceText}>
-            <a className={styles.totalPriceLink}>${safeCart.total.toFixed(2)}</a>
-          </h3>
+      ${safeCart.total.toFixed(2)}
+    </h3>
         </div>
       </Link>
     );

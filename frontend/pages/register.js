@@ -8,6 +8,8 @@ import styles from '../styles/Home.module.css';
 import Layout from '../components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle, faGithub } from '@fortawesome/free-brands-svg-icons';
+import Image from 'next/image';
+
 
 const Register = () => {
   const [data, setData] = useState({ email: "", username: "", password: "", confirmPassword: "" });
@@ -92,11 +94,13 @@ const handleGitHubSignIn = () => {
       <br></br><br></br>
     <Container>
       <Row>
-        <Col sm="12" md={{ size: 5, offset: 3 }}>
-          <div className={styles.paper}>
-          <div className={styles.header}>
-              <img
-                src="http://localhost:1337/uploads/DALL_E_2023_11_26_15_21_17_A_modern_minimalist_black_and_white_photo_icon_featuring_a_sleek_one_line_drawing_style_of_food_The_design_emphasizes_simplicity_and_elegance_wit_138770b511.png"
+      <Col sm="7" md="10" lg="10">
+            <div className={styles.paper}>
+            <div className={styles.header}>
+              <Image
+                src="/logoimage.png"
+                width={300}
+                height={300}
                 alt="Logo"
                 className={styles.loginLogo}
               />
