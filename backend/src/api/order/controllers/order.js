@@ -1,32 +1,56 @@
 'use strict';
 
 const Stripe = require('stripe');
-
-const { createCoreController } = require('@strapi/strapi').factories;
-
 // @ts-ignore
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
+module.exports = {
+  /**
+   * Fetch all orders
+   */
+  async find(ctx) {
+    try {
+      // Query parameters for filtering, sorting, etc.
+      const { params, query } = ctx;
 
-module.exports = createCoreController('api::order.order', ({ strapi }) => ({
+      // Fetch orders using appropriate service method
+      // @ts-ignore
+      const orders = await strapi.query('order').find(params, query);
+
+      ctx.send(orders);
+    } catch (error) {
+      strapi.log.error('Error fetching orders:', error);
+      ctx.internalServerError('Internal server error');
+    }
+  },
+
+  /**
+   * Create a new order
+   */
   async create(ctx) {
     try {
-      // @ts-ignore
       const { user, total, address, dishes, token } = ctx.request.body;
 
-      // Convert total to cents as Stripe expects the amount to be in the smallest currency unit
+      // Validate incoming data
+      if (!user || !user.id || !user.email) {
+        return ctx.badRequest('Missing or incomplete user information');
+      }
+      if (!total || !address || !dishes || !token) {
+        return ctx.badRequest('Missing required order fields');
+      }
+
       const stripeAmount = Math.floor(total * 100);
 
       // Create a charge using Stripe
       const charge = await stripe.charges.create({
         amount: stripeAmount,
         currency: 'usd',
-        description: `Order ${new Date()} by ${user.username}`,
+        description: `Order on ${new Date()} by ${user.email}`,
         source: token,
       });
 
       if (charge) {
-        // Payment successful, create order in Strapi
+        // Create order in Strapi
         const strapiOrder = await strapi.entityService.create('api::order.order', {
           data: {
             user: user.id,
@@ -34,15 +58,41 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
             address,
             dishes: dishes.map(dish => dish.id),
             paymentStatus: 'paid',
+            email: user.email,
           },
         });
 
         ctx.send({ message: 'Order processed successfully', order: strapiOrder });
       } else {
-        ctx.send({ message: 'Payment failed' }, 400);
+        ctx.badRequest('Payment failed');
       }
     } catch (error) {
-      ctx.throw(500, error);
+      strapi.log.error('Order creation error:', error);
+      ctx.internalServerError('Internal server error');
     }
-  }
-}));
+  },
+
+  /**
+   * Fetch a single order by ID
+   */
+  async findOne(ctx) {
+    try {
+      const { params } = ctx;
+
+      // Fetch order using appropriate service method
+      // @ts-ignore
+      const order = await strapi.query('order').findOne(params);
+
+      if (!order) {
+        return ctx.notFound('Order not found');
+      }
+
+      ctx.send(order);
+    } catch (error) {
+      strapi.log.error('Error fetching order:', error);
+      ctx.internalServerError('Internal server error');
+    }
+  },
+
+  // Add other methods as needed: update, delete, etc.
+};

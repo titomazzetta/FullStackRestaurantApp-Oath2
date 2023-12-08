@@ -3,22 +3,18 @@ import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { Container, Nav, NavItem } from "reactstrap";
 import AppContext from "./context";
+import styles from '../styles/Home.module.css'; // Ensure this path is correct to your CSS module
 
 const Layout = (props) => {
   const { user, setUser, isAuthenticated, setIsAuthenticated } = useContext(AppContext);
   const { data: session, status } = useSession();
 
-  console.log("Layout component rendered"); // Check if Layout is rendered
-
   useEffect(() => {
-    console.log("Session status:", status); // Check the session status
-    console.log("Session data:", session);  // Check the session data
-
     if (status === "authenticated") {
       setUser({
         email: session.user.email,
         username: session.user.name,
-        image: session.user.image, // Assuming this is where the profile image URL is stored
+        image: session.user.image,
       });
       setIsAuthenticated(true);
     } else {
@@ -29,7 +25,7 @@ const Layout = (props) => {
 
   const handleLogout = async (e) => {
     e.preventDefault();
-    await signOut({ redirect: false }); // NextAuth sign-out process
+    await signOut({ redirect: false });
     setUser(null);
     setIsAuthenticated(false);
   };
@@ -37,49 +33,45 @@ const Layout = (props) => {
   return (
     <div>
       <header>
-        <Nav className="navbar navbar-dark bg-dark">
-          <NavItem>
-            <Link href="/" passHref>
-              <span className="navbar-brand">Home</span>
-            </Link>
-          </NavItem>
+        <Nav className="navbar navbar-dark" style={{ backgroundColor: 'black', display: 'flex', justifyContent: 'space-between', minHeight: '70px', padding: '0 20px' }}>
+          {/* Left-aligned items */}
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <NavItem>
+              <Link href="/" passHref>
+                <span className="navbar-brand" style={{ color: 'white', cursor: 'pointer' }}>Home</span>
+              </Link>
+            </NavItem>
+          </div>
 
-          {isAuthenticated && user ? (
-            <React.Fragment>
-              {/* Separate NavItem for the profile picture */}
-              <NavItem className="ml-auto">
+          {/* Right-aligned items */}
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {isAuthenticated && user ? (
+              <>
                 {user.image && (
                   <img
                     src={user.image}
                     alt="Profile"
-                    style={{ width: '30px', height: '30px', borderRadius: '50%', marginRight: '10px' }}
+                    style={{ width: '30px', height: '30px', borderRadius: '50%', marginRight: '20px' }}
                   />
                 )}
-              </NavItem>
-
-              {/* Separate NavItem for the username */}
-              <NavItem>
-                <h5>{user.username}</h5>
-              </NavItem>
-
-              <NavItem>
-                <a href="/" className="nav-link" onClick={handleLogout}>Logout</a>
-              </NavItem>
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              <NavItem className="ml-auto">
-                <Link href="/register" passHref>
-                  <span className="nav-link">Sign up</span>
-                </Link>
-              </NavItem>
-              <NavItem>
-                <Link href="/login" passHref>
-                  <span className="nav-link">Sign in</span>
-                </Link>
-              </NavItem>
-            </React.Fragment>
-          )}
+                <h5 style={{ margin: '0 20px 0 0', lineHeight: '30px', color: 'white' }}>{user.username}</h5>
+                <a href="/" onClick={handleLogout} style={{ color: 'white', cursor: 'pointer', textDecoration: 'none' }}>Logout</a>
+              </>
+            ) : (
+              <>
+                <NavItem style={{ marginRight: '20px' }}>
+                  <Link href="/register" passHref>
+                    <span className={`nav-link ${styles.signInButton}`}>Sign up</span>
+                  </Link>
+                </NavItem>
+                <NavItem>
+                  <Link href="/login" passHref>
+                    <span className={`nav-link ${styles.signInButton}`}>Sign in</span>
+                  </Link>
+                </NavItem>
+              </>
+            )}
+          </div>
         </Nav>
       </header>
       <Container>{props.children}</Container>

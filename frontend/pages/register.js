@@ -5,15 +5,14 @@ import axios from 'axios';
 import { signIn } from 'next-auth/react';
 import AppContext from "../components/context";
 import styles from '../styles/Home.module.css';
-import Layout from '../components/layout'; // Ensure this path is correct
-
+import Layout from '../components/layout';
 
 const Register = () => {
   const [data, setData] = useState({ email: "", username: "", password: "", confirmPassword: "" });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const appContext = useContext(AppContext);
   const router = useRouter();
+  const appContext = useContext(AppContext);
 
   const handleInputChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
@@ -36,36 +35,47 @@ const Register = () => {
     if (!validateForm()) return;
     setLoading(true);
     try {
-      const registrationResponse = await axios.post("http://localhost:1337/api/auth/local/register", {
+      const registrationResponse = await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}api/auth/local/register`, {
         username: data.username,
         email: data.email,
         password: data.password
       });
+      
     
       if (registrationResponse.data) {
         const signInRes = await signIn('credentials', {
           redirect: false,
-          email: data.email,
-          password: data.password
+          username: data.username, // Use 'username' or 'email' based on your Strapi configuration
+          password: data.password,
         });
     
-        if (!signInRes.error) {
-          // Update your context or global state as needed
-          appContext.setUser(registrationResponse.data.user);
-          // Redirect to the desired page after successful sign-in
-          router.push('/');
-        } else {
-          // Handle sign-in errors here
+        if (signInRes.error) {
           setErrors({ form: signInRes.error });
+        } else {
+          appContext.setUser(registrationResponse.data.user);
+          router.push('/');
         }
       }
     } catch (error) {
-      // Handle registration errors here
-      setErrors({ form: error.response?.data?.message[0]?.messages[0]?.message || "Registration failed" });
+      console.error("Registration error:", error);
+      let errorMessage = "Registration failed"; // Default message
+
+      if (error.response && error.response.data) {
+        console.log("Error response data:", error.response.data);
+
+        if (typeof error.response.data.message === 'string') {
+          errorMessage = error.response.data.message;
+        } else if (Array.isArray(error.response.data.message)) {
+          errorMessage = error.response.data.message[0]?.messages[0]?.message || errorMessage;
+        }
+      }
+
+      setErrors({ form: errorMessage });
     } finally {
       setLoading(false);
-    }    
+    }
   };
+
 
   return (
     <Layout>

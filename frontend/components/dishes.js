@@ -38,7 +38,7 @@ function Dishes({ dishes }) {
     <Row className={styles.customGrid}>
       {/* Map through each dish and create a card */}
       {dishes.map((dish) => (
-        <Col className={styles.customCol} xs="12" key={dish.id}>
+        <Col className={styles.customCol} xs="3" key={dish.id}>
           <Card className={styles.customCard}>
             <CardImg
               top

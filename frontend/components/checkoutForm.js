@@ -17,36 +17,32 @@ function CheckoutForm() {
     const { data: session } = useSession();
     const router = useRouter();
 
-    function onChange(e) {
-        const { name, value } = e.target;
-        setData({ ...data, [name]: value });
-    }
+    const onChange = (e) => {
+        setData({ ...data, [e.target.name]: e.target.value });
+    };
 
-    async function submitOrder() {
+    const submitOrder = async () => {
         if (!stripe || !elements) {
             console.error("Stripe has not loaded");
             return;
         }
-    
+
         const cardElement = elements.getElement(CardElement);
-        const { token, stripeError } = await stripe.createToken(cardElement);
-    
+        const { token, error: stripeError } = await stripe.createToken(cardElement);
+
         if (stripeError) {
             setError(stripeError.message);
             return;
         }
-    
+
         if (!session) {
             console.error("No session found, user must be logged in to place an order");
             return;
         }
-    
+        
         const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
         const authToken = session.jwt;
-    
-        // Ensure that the user's email is included in the order data
-        const userEmail = session.user.email;
-    
+
         try {
             const response = await fetch(`${API_URL}/api/orders`, {
                 method: "POST",
@@ -55,15 +51,15 @@ function CheckoutForm() {
                     'Authorization': `Bearer ${authToken}`,
                 },
                 body: JSON.stringify({
-                    user: appContext.user,
+                    user: session.user.id,  // Assuming user ID is needed
                     total: appContext.cart.total,
                     address: `${data.address}, ${data.city}, ${data.state}`,
                     dishes: appContext.cart.items.map(item => ({ id: item.id })),
                     token: token.id,
-                    email: userEmail, // Include email
+                    email: session.user.email,  // Make sure email is included here
                 }),
             });
-    
+
             if (response.ok) {
                 setShowModal(true);
                 setTimeout(() => {
@@ -77,9 +73,7 @@ function CheckoutForm() {
         } catch (error) {
             console.error("There was an error submitting the order:", error);
         }
-    }
-    
-    
+    };
 
     return (
         <div className="paper" style={{ border: "1px solid lightgray", paddingLeft: "20px", paddingRight: "20px", boxShadow: "0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12)" }}>
@@ -108,6 +102,7 @@ function CheckoutForm() {
                     Order successful! Redirecting to homepage...
                 </ModalBody>
             </Modal>
+            {error && <div className="error">{error}</div>}
         </div>
     );
 }

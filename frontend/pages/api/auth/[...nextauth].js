@@ -1,9 +1,10 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
+import CredentialsProvider from "next-auth/providers/credentials";
 import axios from "axios";
 
-const API_URL = "http://127.0.0.1:1337"; // Add the protocol (http:// or https://)
+const API_URL = "http://127.0.0.1:1337";
 
 export default NextAuth({
   providers: [
@@ -15,70 +16,73 @@ export default NextAuth({
       clientId: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
     }),
-    
-    
+    CredentialsProvider({
+      name: 'Credentials',
+      credentials: {
+        username: { label: "Username", type: "text" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        try {
+          const res = await axios.post(`${API_URL}/api/auth/local`, {
+            identifier: credentials.username,
+            password: credentials.password,
+          });
 
+          if (res.data) {
+            return { ...res.data.user, jwt: res.data.jwt };
+          } else {
+            throw new Error('Invalid credentials');
+          }
+        } catch (error) {
+          throw new Error('Invalid credentials');
+        }
+      }
+    }),
   ],
   callbacks: {
     async signIn({ user, account }) {
-      if (account.provider === "google") {
-        try {
-          // Include the Google access token in the request to Strapi
-          const strapiRes = await axios.post(`${API_URL}/api/auth/google`, {
-            email: user.email,
-            username: user.name, // or any other user info you have
-            access_token: account.access_token, // Include the Google access token here
-          });
+      if (account.provider === "google" || account.provider === "github") {
+        const providerResponse = account.provider === "google"
+          ? await axios.post(`${API_URL}/api/auth/google`, {
+              email: user.email,
+              username: user.name,
+              access_token: account.access_token,
+            })
+          : await axios.post(`${API_URL}/api/auth/github`, {
+              access_token: account.access_token,
+            });
 
-          if (strapiRes.data) {
-            // Attach the JWT from Strapi to the NextAuth user object
-            user.jwt = strapiRes.data.jwt;
-            return true;
-          } else {
-            return false;
-          }
-        } catch (error) {
-          console.error("Error during Strapi authentication:", error);
+        if (providerResponse.data) {
+          user.jwt = providerResponse.data.jwt;
+          return true;
+        } else {
           return false;
         }
-      } else if (account.provider === "github") {
-        try {
-          // Include the necessary GitHub data in the request to Strapi
-          const strapiRes = await axios.post(`${API_URL}/api/auth/github`, {
-            access_token: account.access_token,
-            // Include the necessary data from the GitHub account object
-            // For example: email, username, etc.
-          });
-
-          if (strapiRes.data) {
-            // Attach the JWT from Strapi to the NextAuth user object
-            user.jwt = strapiRes.data.jwt;
-            return true;
-          } else {
-            return false;
-          }
-        } catch (error) {
-          console.error("Error during Strapi authentication:", error);
-          return false;
-        }
+      } else if (user.jwt) {
+        return true;
       }
-      return true;
+      return false;
     },
     async jwt({ token, user }) {
-      // If user object exists and contains a JWT token, attach it to the JWT token
-      if (user && user.jwt) {
+      if (user?.jwt) {
         token.jwt = user.jwt;
       }
       return token;
     },
-    async session({ session, token }) {
-      // Include the JWT from Strapi in the NextAuth session object
-      if (token.jwt) {
+    async session({ session, token, user }) {
+      // Attach JWT and user details to the session
+      if (token?.jwt) {
         session.jwt = token.jwt;
       }
+
+      // Add user ID and email to the session object if available
+      if (user) {
+        session.user.id = user.id;
+        session.user.email = user.email;
+      }
+
       return session;
     },
-    // ... other callbacks if needed
   },
-  // Additional NextAuth configuration if needed...
 });
