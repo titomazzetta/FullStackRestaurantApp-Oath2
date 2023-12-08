@@ -6,6 +6,8 @@ import { signIn } from 'next-auth/react';
 import AppContext from "../components/context";
 import styles from '../styles/Home.module.css';
 import Layout from '../components/layout';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGoogle, faGithub } from '@fortawesome/free-brands-svg-icons';
 
 const Register = () => {
   const [data, setData] = useState({ email: "", username: "", password: "", confirmPassword: "" });
@@ -76,13 +78,29 @@ const Register = () => {
     }
   };
 
+// Function to handle Google login
+const handleGoogleSignIn = () => {
+  signIn("google", { callbackUrl: "/" });
+};
 
+// Function to handle GitHub login
+const handleGitHubSignIn = () => {
+  signIn("github", { callbackUrl: "/" });
+};
   return (
     <Layout>
+      <br></br><br></br>
     <Container>
       <Row>
         <Col sm="12" md={{ size: 5, offset: 3 }}>
           <div className={styles.paper}>
+          <div className={styles.header}>
+              <img
+                src="http://localhost:1337/uploads/DALL_E_2023_11_26_15_21_17_A_modern_minimalist_black_and_white_photo_icon_featuring_a_sleek_one_line_drawing_style_of_food_The_design_emphasizes_simplicity_and_elegance_wit_138770b511.png"
+                alt="Logo"
+                className={styles.loginLogo}
+              />
+            </div>
             <section className={styles.wrapper}>
               {errors.form && <div className={styles.notification}>{errors.form}</div>}
               <Form onSubmit={handleSubmit}>
@@ -135,6 +153,24 @@ const Register = () => {
                     {loading ? "Loading..." : "Sign Up"}
                   </Button>
                 </FormGroup>
+
+                <FormGroup className={`${styles.buttonGroup} text-center`}>
+
+  <Button
+    onClick={handleGoogleSignIn}
+    className={`btn btn-primary ${styles.googleSignInButton} rounded mx-2`}
+    title="Sign in via Google Account"
+  >
+    <FontAwesomeIcon icon={faGoogle} />
+  </Button>
+  <Button
+    onClick={handleGitHubSignIn}
+    className={`btn btn-primary ${styles.githubSignInButton} rounded mx-2`}
+    title="Sign in via GitHub Account"
+  >
+    <FontAwesomeIcon icon={faGithub} />
+  </Button>
+</FormGroup>
               </Form>
             </section>
           </div>

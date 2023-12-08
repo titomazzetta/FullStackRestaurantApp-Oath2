@@ -45,6 +45,7 @@ function Cart() {
 
   return (
     <div className={styles.cartContainer}>
+      
     <Card className={styles.cartCard}>
       <div className={styles.cartTitle}>
         <h3>Cart</h3>

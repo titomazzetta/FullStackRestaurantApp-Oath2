@@ -53,9 +53,7 @@
 
 .title a:hover,
 .title a:focus,
-.title a:active {
-  text-decoration: underline;
-}
+.title a:active 
 
 .title {
   margin: 0;
@@ -550,5 +548,28 @@
   background-color: white;
   color: black;
   border-color: black;
+}
+
+.totalPriceBox {
+  background-color: white; /* White background */
+  padding: 10px; /* Some padding */
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow */
+  display: flex; /* For centering content */
+  align-items: center; /* Align items vertically */
+  justify-content: center; /* Center content horizontally */
+  margin-right: 20px; /* Adjust as needed for positioning in the navbar */
+}
+
+.totalPriceText {
+  color: black; /* Text color */
+  margin: 0; /* Remove default margins */
+  font-size: 1em; /* Adjust font size as needed */
+}
+
+.totalPriceLink {
+  text-decoration: none; /* Remove underline */
+  color: #333; /* Set the color to your desired value */
+  /* Add any other custom styles you want for the link */
 }
 

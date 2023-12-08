@@ -1,15 +1,9 @@
-{
-  "routes"; [
-    {
-      "method": "GET",
-      "path": "/api/orders",
-      "handler": "order.find"
-    },
-    {
-      "method": "POST",
-      "path": "/api/orders",
-      "handler": "order.create"
-    },
-    // ... other routes ...
-  ]
-}
+'use strict';
+
+/**
+ * order router
+ */
+
+const { createCoreRouter } = require('@strapi/strapi').factories;
+
+module.exports = createCoreRouter('api::order.order');

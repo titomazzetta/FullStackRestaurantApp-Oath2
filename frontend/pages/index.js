@@ -45,7 +45,7 @@ function Home() {
                     <br></br>
                 </div>
                 <RestaurantList search={query} />
-                {hasCartItems && <Cart />}
+                <Cart />
                 <br></br>
                 <br></br>
             </ApolloProvider>

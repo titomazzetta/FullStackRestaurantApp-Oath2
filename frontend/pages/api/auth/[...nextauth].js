@@ -70,18 +70,10 @@ export default NextAuth({
       }
       return token;
     },
-    async session({ session, token, user }) {
-      // Attach JWT and user details to the session
+    async session({ session, token }) {
       if (token?.jwt) {
         session.jwt = token.jwt;
       }
-
-      // Add user ID and email to the session object if available
-      if (user) {
-        session.user.id = user.id;
-        session.user.email = user.email;
-      }
-
       return session;
     },
   },

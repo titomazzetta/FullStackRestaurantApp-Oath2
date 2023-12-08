@@ -33,6 +33,12 @@ function Dishes({ dishes }) {
     }
   };
 
+  // Function to handle the add-to-cart action
+  const handleAddToCart = (item, event) => {
+    event.preventDefault(); // Prevent default button behavior
+    addItem(item); // Add item to cart
+  };
+
   // The main render function for the component
   return (
     <Row className={styles.customGrid}>
@@ -56,14 +62,15 @@ function Dishes({ dishes }) {
 
               {/* Price and add-to-cart button */}
               <div className={styles.priceAndCartContainer}>
-                <Button
+              <Button
+                  type="button"
                   className={`${isSmallScreen ? styles.buttonSmallScreen : ''} ${styles.addToCartButton}`}
                   color="info"
-                  onClick={() => addItem({
+                  onClick={(event) => handleAddToCart({
                     id: dish.id, 
                     Dish: dish.attributes.Dish, 
                     Price: dish.attributes.Price
-                  })}
+                  }, event)}
                 >
                   {isSmallScreen ? '+' : 'Add to Cart +'}
                 </Button>

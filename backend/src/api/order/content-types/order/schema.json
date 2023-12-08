@@ -26,10 +26,10 @@
     },
     "user": {
       "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user"
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "order"
     },
-    
     "paymentStatus": {
       "type": "enumeration",
       "enum": [

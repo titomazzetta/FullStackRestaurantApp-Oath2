@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Container, Nav, NavItem } from "reactstrap";
 import AppContext from "./context";
 import styles from '../styles/Home.module.css'; // Ensure this path is correct to your CSS module
-
+import TotalPrice from "./totalprice";
 const Layout = (props) => {
   const { user, setUser, isAuthenticated, setIsAuthenticated } = useContext(AppContext);
   const { data: session, status } = useSession();
@@ -42,6 +42,11 @@ const Layout = (props) => {
               </Link>
             </NavItem>
           </div>
+          <div>
+      {/* ... your existing layout markup */}
+      <TotalPrice /> {/* This will display only the total price */}
+    </div>
+    
 
           {/* Right-aligned items */}
           <div style={{ display: 'flex', alignItems: 'center' }}>

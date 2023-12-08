@@ -12,11 +12,17 @@ const AppContext = React.createContext({
   setUser: () => {},
   logout: () => {}
 });
+
+
+
 export const AppProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [cart, setCart] = useState({ items: [], total: 0 });
   const { data: session, status } = useSession();
+  const clearCart = () => {
+    setCart({ items: [], total: 0 }); // This should now work correctly
+  };
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -91,7 +97,17 @@ export const AppProvider = ({ children }) => {
 
 
   return (
-    <AppContext.Provider value={{ user, setUser, isAuthenticated, setIsAuthenticated, logout, cart, addItem, removeItem }}>
+    <AppContext.Provider value={{ 
+      user, 
+      setUser, 
+      isAuthenticated, 
+      setIsAuthenticated, 
+      logout, 
+      cart, 
+      addItem, 
+      removeItem, 
+      clearCart // Make sure to include clearCart here
+    }}>
       {children}
     </AppContext.Provider>
   );
