@@ -1,45 +1,27 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import CredentialsProvider from "next-auth/providers/credentials";
+import GitHubProvider from "next-auth/providers/github";
 import axios from "axios";
 
 const API_URL = "http://127.0.0.1:1337"; // Add the protocol (http:// or https://)
 
 export default NextAuth({
   providers: [
-    CredentialsProvider({
-      name: "Credentials",
-      async authorize(credentials) {
-        try {
-          const res = await axios.post(`${API_URL}/api/auth/local`, {
-            identifier: credentials.email,
-            password: credentials.password,
-            
-          });
-
-          if (res.data) {
-            const user = res.data.user;
-            // Attach the JWT from Strapi to the user object
-            user.jwt = res.data.jwt;
-            return user;
-          } else {
-            throw new Error("Invalid credentials");
-          }
-        } catch (error) {
-          throw new Error("Authorization error: " + error.message); // Provide more informative error messages
-        }
-      },
-    }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      // Add necessary scopes here if needed
     }),
-    // ... other providers if you have any
+    GitHubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    }),
+    
+    
+
   ],
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
-      if (account.provider === 'google') {
+    async signIn({ user, account }) {
+      if (account.provider === "google") {
         try {
           // Include the Google access token in the request to Strapi
           const strapiRes = await axios.post(`${API_URL}/api/auth/google`, {
@@ -56,7 +38,27 @@ export default NextAuth({
             return false;
           }
         } catch (error) {
-          console.error('Error during Strapi authentication:', error);
+          console.error("Error during Strapi authentication:", error);
+          return false;
+        }
+      } else if (account.provider === "github") {
+        try {
+          // Include the necessary GitHub data in the request to Strapi
+          const strapiRes = await axios.post(`${API_URL}/api/auth/github`, {
+            access_token: account.access_token,
+            // Include the necessary data from the GitHub account object
+            // For example: email, username, etc.
+          });
+
+          if (strapiRes.data) {
+            // Attach the JWT from Strapi to the NextAuth user object
+            user.jwt = strapiRes.data.jwt;
+            return true;
+          } else {
+            return false;
+          }
+        } catch (error) {
+          console.error("Error during Strapi authentication:", error);
           return false;
         }
       }
@@ -76,6 +78,7 @@ export default NextAuth({
       }
       return session;
     },
+    // ... other callbacks if needed
   },
   // Additional NextAuth configuration if needed...
 });

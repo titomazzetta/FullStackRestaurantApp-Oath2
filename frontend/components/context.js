@@ -20,7 +20,7 @@ export const AppProvider = ({ children }) => {
 
   useEffect(() => {
     if (status === "authenticated") {
-      setUser({ email: session.user.email, username: session.user.name });
+      setUser({ email: session.user.email, username: session.user.name, image: session.user.image,});
       setIsAuthenticated(true);
     } else {
       setUser(null);

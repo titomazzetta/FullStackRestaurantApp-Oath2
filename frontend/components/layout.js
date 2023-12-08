@@ -15,7 +15,11 @@ const Layout = (props) => {
     console.log("Session data:", session);  // Check the session data
 
     if (status === "authenticated") {
-      setUser({ email: session.user.email, username: session.user.name });
+      setUser({
+        email: session.user.email,
+        username: session.user.name,
+        image: session.user.image, // Assuming this is where the profile image URL is stored
+      });
       setIsAuthenticated(true);
     } else {
       setUser(null);
@@ -42,9 +46,22 @@ const Layout = (props) => {
 
           {isAuthenticated && user ? (
             <React.Fragment>
+              {/* Separate NavItem for the profile picture */}
               <NavItem className="ml-auto">
-                <h5>{user.username}</h5> {/* Display user's name from context */}
+                {user.image && (
+                  <img
+                    src={user.image}
+                    alt="Profile"
+                    style={{ width: '30px', height: '30px', borderRadius: '50%', marginRight: '10px' }}
+                  />
+                )}
               </NavItem>
+
+              {/* Separate NavItem for the username */}
+              <NavItem>
+                <h5>{user.username}</h5>
+              </NavItem>
+
               <NavItem>
                 <a href="/" className="nav-link" onClick={handleLogout}>Logout</a>
               </NavItem>

@@ -15,7 +15,13 @@ function Login() {
 
   const handleGoogleSignIn = () => {
     signIn('google', { callbackUrl: '/' });
+
   };
+
+  const handleGitHubSignIn = () => {
+    signIn('github', { callbackUrl: '/' });
+  };
+  
   
 
   const handleInputChange = (e) => {
@@ -92,6 +98,10 @@ function Login() {
                     <Button onClick={handleGoogleSignIn} className={styles.googleSignInButton}>
         Sign in with Google
       </Button>
+      <Button onClick={handleGitHubSignIn} className={styles.githubSignInButton}>
+  Sign in with GitHub
+</Button>
+
                   </FormGroup>
                 </Form>
               </section>
