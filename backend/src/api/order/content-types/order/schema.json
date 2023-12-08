@@ -4,7 +4,8 @@
   "info": {
     "singularName": "order",
     "pluralName": "orders",
-    "displayName": "Order"
+    "displayName": "Order",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -25,10 +26,10 @@
     },
     "user": {
       "type": "relation",
-      "relation": "oneToOne",
-      "target": "plugin::users-permissions.user",
-      "inversedBy": "order"
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
     },
+    
     "paymentStatus": {
       "type": "enumeration",
       "enum": [
@@ -36,6 +37,9 @@
         "pending",
         "failed"
       ]
+    },
+    "email": {
+      "type": "string"
     }
   }
 }

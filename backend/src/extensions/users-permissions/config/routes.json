@@ -1,9 +1,0 @@
-{
-    "method": "POST",
-    "path": "/api/auth/google/callback",
-    "handler": "Auth.callback",
-    "config": {
-      "policies": []
-    }
-  }
-  
