@@ -42,7 +42,7 @@ export const login = (identifier, password) => {
       .post(`${API_URL}/api/auth/local`, { identifier, password }) // Corrected endpoint
       .then((res) => {
         // Set token response from Strapi for server validation
-        Cookie.set("token", res.data.jwt);
+        // Cookie.set("token", res.data.jwt);
         // Resolve the promise to set loading to false in login form
         resolve(res);
         // Redirect back to home page after login
@@ -57,15 +57,10 @@ export const login = (identifier, password) => {
 
 // Logout function
 export const logout = () => {
-  // Remove token and user cookie
-  Cookie.remove("token");
-  delete window.__user;
-  // Sync logout between multiple windows
-  window.localStorage.setItem("logout", Date.now());
-  // Redirect to the home page
+  Cookie.remove("token"); // Optional based on your setup
+  signOut({ redirect: false });
   Router.push("/");
 };
-
 // Higher Order Component to wrap our pages and logout simultaneously logged in tabs
 // Not used in this tutorial, only provided if you wanted to implement
 export const withAuthSync = (Component) => {
@@ -93,4 +88,28 @@ export const withAuthSync = (Component) => {
   }
 
   return Wrapper;
+};
+
+
+export const googleLogin = (googleCode) => {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  return new Promise((resolve, reject) => {
+    axios
+      .post(`${API_URL}/api/strapi-google-auth/user-profile`, { code: googleCode })
+      .then((res) => {
+        // Set token response from Strapi for server validation
+        Cookie.set("token", res.data.jwt);
+        // Resolve the promise to set loading to false in login form
+        resolve(res);
+        // Redirect back to home page after login
+        Router.push("/");
+      })
+      .catch((error) => {
+        // Reject the promise and pass the error object back to the form
+        reject(error);
+      });
+  });
 };

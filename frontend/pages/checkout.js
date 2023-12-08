@@ -6,7 +6,9 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "../components/checkoutForm";
 import AppContext from "../components/context";
-import styles from '../styles/Home.module.css'; // Ensure this path is correct
+import styles from '../styles/Home.module.css'; 
+
+import Layout from '../components/layout'; // Ensure this path is correct
 
 function Checkout() {
   const { cart } = useContext(AppContext); 
@@ -33,6 +35,7 @@ function Checkout() {
   };
 
   return (
+    <Layout> 
     <Row>
        <Col sm="12" md={{ size: 8, offset: 2 }} className={styles.checkoutCol}>
      
@@ -52,6 +55,7 @@ function Checkout() {
         </div>
       </Col>
     </Row>
+    </Layout>
   );
 }
 

@@ -1,7 +1,7 @@
 /* /context/AppContext.js */
-import React, { useState } from "react";
-import { logout as authLogout } from './auth'; // Import the logout function
-
+import React, { useState, useEffect } from "react"; // Import useEffect here
+import { logout as authLogout } from './auth';
+import { useSession } from "next-auth/react";
 // Create auth context with default value
 const AppContext = React.createContext({
   isAuthenticated: false, 
@@ -12,10 +12,21 @@ const AppContext = React.createContext({
   setUser: () => {},
   logout: () => {}
 });
-
 export const AppProvider = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [cart, setCart] = useState({ items: [], total: 0 });
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      setUser({ email: session.user.email, username: session.user.name });
+      setIsAuthenticated(true);
+    } else {
+      setUser(null);
+      setIsAuthenticated(false);
+    }
+  }, [session, status]);
 
   // Function to add item to the cart
   const addItem = (item) => {
@@ -43,6 +54,16 @@ export const AppProvider = ({ children }) => {
   
     setCart(updatedCart);
   };
+  //logout function
+
+  const logout = () => {
+    nextAuthSignOut(); // Sign out with next-auth
+    setUser(null); // Clear user state in context
+    setIsAuthenticated(false); // Update isA
+    authLogout(); // This should trigger NextAuth.js signOut
+    setUser(null); // Clear user state
+    setCart({ items: [], total: 0 }); // Reset cart on logout
+  };
 
   // Function to remove item from the cart
   const removeItem = (itemId) => {
@@ -68,15 +89,9 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  // Include the logout function in the provider
-  const logout = () => {
-    authLogout();
-    setUser(null);
-    setCart({ items: [], total: 0 }); // Reset cart on logout
-  };
 
   return (
-    <AppContext.Provider value={{ user, setUser, logout, cart, addItem, removeItem }}>
+    <AppContext.Provider value={{ user, setUser, isAuthenticated, setIsAuthenticated, logout, cart, addItem, removeItem }}>
       {children}
     </AppContext.Provider>
   );

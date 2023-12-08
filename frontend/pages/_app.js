@@ -1,19 +1,11 @@
-// _app.js
-import { useMemo } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements } from '@stripe/react-stripe-js';
 import { SessionProvider } from "next-auth/react";
-import { AppProvider } from '../components/context';
+import { AppProvider } from '../components/context'; // Your context provider
 
-const MyApp = ({ Component, pageProps }) => {
-  const stripePromise = useMemo(() => loadStripe("your-publishable-key"), []);
-
+function MyApp({ Component, pageProps }) {
   return (
     <SessionProvider session={pageProps.session}>
       <AppProvider>
-        <Elements stripe={stripePromise}>
-          <Component {...pageProps} />
-        </Elements>
+        <Component {...pageProps} />
       </AppProvider>
     </SessionProvider>
   );
