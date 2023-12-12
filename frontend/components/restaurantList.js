@@ -9,7 +9,10 @@ function RestaurantList(props) {
   const [restaurantID, setRestaurantID] = useState(null);
   const [visibleDescriptionId, setVisibleDescriptionId] = useState(null);
   const [filteredDishes, setFilteredDishes] = useState([]);
+  const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [isDishSearch, setIsDishSearch] = useState(false);
+
+
 
   useEffect(() => {
 
@@ -67,11 +70,21 @@ function RestaurantList(props) {
     if (data) {
       const searchLowerCase = props.search.toLowerCase();
       let searchDishes = [];
+      let searchRestaurants = [];
       let isDishMatch = false;
+      let isRestaurantMatch = false;
 
       if (searchLowerCase) {
-        data.restaurants.data.forEach(res => {
-          res.attributes.dishes.data.forEach(dish => {
+        data.restaurants.data.forEach(restaurant => {
+          // Check for restaurant match
+          if (restaurant.attributes.title.toLowerCase().includes(searchLowerCase) ||
+              restaurant.attributes.description.toLowerCase().includes(searchLowerCase)) {
+            searchRestaurants.push(restaurant);
+            isRestaurantMatch = true;
+          }
+
+          // Check for dish match
+          restaurant.attributes.dishes.data.forEach(dish => {
             if (dish.attributes.Dish.toLowerCase().includes(searchLowerCase)) {
               searchDishes.push(dish);
               isDishMatch = true;
@@ -81,6 +94,7 @@ function RestaurantList(props) {
       }
 
       setFilteredDishes(isDishMatch ? searchDishes : []);
+      setFilteredRestaurants(isRestaurantMatch ? searchRestaurants : []);
       setIsDishSearch(isDishMatch);
     }
   }, [props.search, data]);
@@ -116,7 +130,9 @@ function RestaurantList(props) {
 
 
   const renderRestaurants = () => {
-    return data.restaurants.data.map((res) => (
+    // Determine which list of restaurants to use based on search
+    const restaurantsToRender = props.search ? filteredRestaurants : data.restaurants.data;
+    return restaurantsToRender.map((res)  => (
       <Col xs="12" sm="6" md="4" key={res.id} className={styles.restaurantCol}>
         <Card className={styles.restaurantCard}>
           <div className={styles.imageContainer}>
