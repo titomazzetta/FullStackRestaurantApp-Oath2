@@ -34,8 +34,7 @@ function Dishes({ dishes }) {
   };
 
   // Function to handle the add-to-cart action
-  const handleAddToCart = (item, event) => {
-    event.preventDefault(); // Prevent default button behavior
+  const handleAddToCart = (item) => {
     addItem(item); // Add item to cart
   };
 
