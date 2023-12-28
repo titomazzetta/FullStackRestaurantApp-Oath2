@@ -14,6 +14,7 @@ const Layout = (props) => {
   useEffect(() => {
     if (status === "authenticated") {
       setUser({
+        id: session.user.id,
         email: session.user.email,
         username: session.user.name,
         image: session.user.image,

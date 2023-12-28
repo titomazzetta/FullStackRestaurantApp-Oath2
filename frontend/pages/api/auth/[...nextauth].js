@@ -55,6 +55,7 @@ export default NextAuth({
 
         if (providerResponse.data) {
           user.jwt = providerResponse.data.jwt;
+          user.id = providerResponse.data.user.id
           return true;
         } else {
           return false;
@@ -67,12 +68,14 @@ export default NextAuth({
     async jwt({ token, user }) {
       if (user?.jwt) {
         token.jwt = user.jwt;
+        token.id = user.id;
       }
       return token;
     },
     async session({ session, token }) {
       if (token?.jwt) {
         session.jwt = token.jwt;
+        session.user.id = token.id;
       }
       return session;
     },
