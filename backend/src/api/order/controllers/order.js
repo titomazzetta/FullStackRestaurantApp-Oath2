@@ -11,7 +11,7 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
   async create(ctx) {
     try {
       // @ts-ignore
-      const { user, total, address, dishes, token } = ctx.request.body;
+      const { user, total, address, dishes, token, email } = ctx.request.body;
 
       // Convert total to cents as Stripe expects the amount to be in the smallest currency unit
       const stripeAmount = Math.floor(total * 100);
@@ -33,6 +33,7 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
             address,
             dishes: dishes.map(dish => dish.id),
             paymentStatus: 'paid',
+            email,
           },
         });
 

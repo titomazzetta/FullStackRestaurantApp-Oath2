@@ -66,9 +66,9 @@
       "inversedBy": "users",
       "configurable": false
     },
-    "order": {
+    "orders": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "oneToMany",
       "target": "api::order.order",
       "mappedBy": "user"
     }
