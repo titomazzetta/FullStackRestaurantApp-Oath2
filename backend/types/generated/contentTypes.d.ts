@@ -382,11 +382,6 @@ export interface ApiDishDish extends Schema.CollectionType {
     Description: Attribute.Text;
     Price: Attribute.Decimal;
     Image: Attribute.Media;
-    order: Attribute.Relation<
-      'api::dish.dish',
-      'manyToOne',
-      'api::order.order'
-    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -418,7 +413,7 @@ export interface ApiOrderOrder extends Schema.CollectionType {
     address: Attribute.Text;
     user: Attribute.Relation<
       'api::order.order',
-      'oneToOne',
+      'manyToOne',
       'plugin::users-permissions.user'
     >;
     paymentStatus: Attribute.Enumeration<['paid', 'pending', 'failed']>;
@@ -820,9 +815,9 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'manyToOne',
       'plugin::users-permissions.role'
     >;
-    order: Attribute.Relation<
+    orders: Attribute.Relation<
       'plugin::users-permissions.user',
-      'oneToOne',
+      'oneToMany',
       'api::order.order'
     >;
     createdAt: Attribute.DateTime;

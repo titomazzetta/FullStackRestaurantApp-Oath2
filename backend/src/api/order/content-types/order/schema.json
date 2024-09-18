@@ -15,8 +15,7 @@
     "dishes": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::dish.dish",
-      "mappedBy": "order"
+      "target": "api::dish.dish"
     },
     "total": {
       "type": "decimal"
@@ -26,9 +25,9 @@
     },
     "user": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "order"
+      "inversedBy": "orders"
     },
     "paymentStatus": {
       "type": "enumeration",

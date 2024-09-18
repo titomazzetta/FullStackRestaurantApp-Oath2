@@ -9,18 +9,16 @@ import AppContext from '../components/context';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
+const link = new HttpLink({ uri: `${API_URL}/graphql` });
+const cache = new InMemoryCache();
+const client = new ApolloClient({ link, cache });
+
 function Home() {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
     const [query, setQuery] = useState("");
-    const link = new HttpLink({ uri: `${API_URL}/graphql` });
-    const cache = new InMemoryCache();
-    const client = new ApolloClient({ link, cache });
-
-    const { cart } = useContext(AppContext);
-    const hasCartItems = cart.items && cart.items.length > 0;
-
     const router = useRouter();
     const { data: session, status } = useSession();
+    
     useEffect(() => {
         // Check if the authentication status is not loading and the session is not present
         if (status !== 'loading' && !session) {
