@@ -1,7 +1,7 @@
 # Full-Stack Restaurant Application
 
 ## Overview
-This project is a full-stack restaurant application developed as a capstone project for the MIT xPRO Full Development certification. Utilizing Next.js for the frontend and Strapi v4 for the backend with GraphQL, this application demonstrates modern web application development techniques. It's a comprehensive example of a full-stack JavaScript application.
+This project is a full-stack restaurant application developed utilizing Next.js for the frontend and Strapi v4 for the backend with GraphQL, this application demonstrates modern web application development techniques. It's a comprehensive example of a full-stack JavaScript application.
 
 ## Table of Contents
 - [Overview](#overview)
